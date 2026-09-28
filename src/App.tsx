@@ -65,43 +65,47 @@ export const App = () => {
 
       <form action="/api/todos" method="POST" onSubmit={handleSubmit}>
         <div className="field">
-          <input
-            type="text"
-            data-cy="titleInput"
-            value={title}
-            placeholder="Enter a title"
-            onChange={handleChangeTitle}
-          />
-          {shouldShowErrTitle && (
-            <span className="error">Please enter a title</span>
-          )}
+          <label>
+            <input
+              type="text"
+              data-cy="titleInput"
+              value={title}
+              placeholder="Enter a title"
+              onChange={handleChangeTitle}
+            />
+            {shouldShowErrTitle && (
+              <span className="error">Please enter a title</span>
+            )}
+          </label>
         </div>
 
         <div className="field">
-          <select
-            data-cy="userSelect"
-            value={userId}
-            onChange={event => {
-              setUserId(+event.target.value);
-              if (shouldShowErrUser) {
-                setShouldShowErUser(false);
-              }
-            }}
-          >
-            <option value="0" disabled>
-              Choose a user
-            </option>
-            {usersFromServer.map(user => {
-              return (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              );
-            })}
-          </select>
-          {shouldShowErrUser && (
-            <span className="error">Please choose a user</span>
-          )}
+          <label>
+            <select
+              data-cy="userSelect"
+              value={userId}
+              onChange={event => {
+                setUserId(+event.target.value);
+                if (shouldShowErrUser) {
+                  setShouldShowErUser(false);
+                }
+              }}
+            >
+              <option value="0" disabled>
+                Choose a user
+              </option>
+              {usersFromServer.map(user => {
+                return (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                );
+              })}
+            </select>
+            {shouldShowErrUser && (
+              <span className="error">Please choose a user</span>
+            )}
+          </label>
         </div>
 
         <button type="submit" data-cy="submitButton">

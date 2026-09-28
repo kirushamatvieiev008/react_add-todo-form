@@ -1,25 +1,7 @@
 import { TodoInfo } from '../TodoInfo';
+import * as Types from '../../types';
 
-type User = {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-};
-
-type ToDo = {
-  id: number;
-  title: string;
-  completed: boolean;
-  userId: number;
-  user: User;
-};
-
-type Prop = {
-  todos: ToDo[];
-};
-
-export const TodoList = ({ todos = [] }: Prop) => {
+export const TodoList = ({ todos = [] }: Types.PropTodos) => {
   return (
     <section className="TodoList">
       {todos.map(todo => {

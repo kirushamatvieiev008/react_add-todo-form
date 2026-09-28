@@ -1,25 +1,7 @@
 import { UserInfo } from '../UserInfo';
+import * as Types from '../../types';
 
-type User = {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-};
-
-type ToDo = {
-  id: number;
-  title: string;
-  completed: boolean;
-  userId: number;
-  user: User;
-};
-
-type Prop = {
-  todo: ToDo;
-};
-
-export const TodoInfo = ({ todo }: Prop) => {
+export const TodoInfo = ({ todo }: Types.PropTodo) => {
   return (
     <article
       data-id={todo.id}
