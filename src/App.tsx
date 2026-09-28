@@ -1,62 +1,73 @@
 import './App.scss';
 
-import usersFromServer from './api/users';
-import todosFromServer from './api/todos';
 import { useState } from 'react';
 
+import usersFromServer from './api/users';
+import todosFromServer from './api/todos';
+import { TodoList } from './components/TodoList';
+
+const getUserById = (userId: number) => {
+  return usersFromServer.find(user => user.id === userId);
+};
+
 const todosData = () => {
-  return todosFromServer.map(el => {
+  return todosFromServer.map(todo => {
     return {
-      ...el,
-      user: usersFromServer.find(us => us.id === el.userId)!,
+      ...todo,
+      user: getUserById(todo.userId)!,
     };
   });
 };
 
-import { TodoList } from './components/TodoList';
-
 export const App = () => {
   const [title, setTitle] = useState('');
   const [userId, setUserId] = useState(0);
-  const [shouldShowErrTitle, setShouldShowErrTitle] = useState(false);
-  const [shouldShowErrUser, setShouldShowErUser] = useState(false);
-  const [toDos, setToDos] = useState(todosData());
+  const [shouldShowErrorTitle, setShouldShowErrorTitle] = useState(false);
+  const [shouldShowErrorUser, setShouldShowErrorUser] = useState(false);
+  const [todos, setTodos] = useState(todosData());
 
   const handleChangeTitle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
-    if (shouldShowErrTitle) {
-      setShouldShowErrTitle(false);
+
+    if (shouldShowErrorTitle) {
+      setShouldShowErrorTitle(false);
     }
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     if (!title || !userId) {
       if (!title) {
-        setShouldShowErrTitle(true);
+        setShouldShowErrorTitle(true);
       }
 
       if (!userId) {
-        setShouldShowErUser(true);
+        setShouldShowErrorUser(true);
       }
-    } else {
-      setShouldShowErUser(false);
-      setShouldShowErrTitle(false);
-      const maxId = Math.max(...toDos.map(el => el.id));
 
-      setToDos([
-        ...toDos,
-        {
-          id: maxId + 1,
-          title: title,
-          userId: userId,
-          completed: false,
-          user: usersFromServer.find(us => us.id === userId)!,
-        },
-      ]);
-      setTitle('');
-      setUserId(0);
+      return;
     }
+
+    setShouldShowErrorUser(false);
+    setShouldShowErrorTitle(false);
+
+    const maxId = Math.max(0, ...todos.map(todoItem => todoItem.id));
+    const selectedUser = getUserById(userId);
+
+    setTodos(currentTodos => [
+      ...currentTodos,
+      {
+        id: maxId + 1,
+        title,
+        userId,
+        completed: false,
+        user: selectedUser!,
+      },
+    ]);
+
+    setTitle('');
+    setUserId(0);
   };
 
   return (
@@ -73,7 +84,7 @@ export const App = () => {
               placeholder="Enter a title"
               onChange={handleChangeTitle}
             />
-            {shouldShowErrTitle && (
+            {shouldShowErrorTitle && (
               <span className="error">Please enter a title</span>
             )}
           </label>
@@ -81,13 +92,16 @@ export const App = () => {
 
         <div className="field">
           <label>
+            User
             <select
+              aria-label="User"
               data-cy="userSelect"
               value={userId}
               onChange={event => {
                 setUserId(+event.target.value);
-                if (shouldShowErrUser) {
-                  setShouldShowErUser(false);
+
+                if (shouldShowErrorUser) {
+                  setShouldShowErrorUser(false);
                 }
               }}
             >
@@ -102,7 +116,7 @@ export const App = () => {
                 );
               })}
             </select>
-            {shouldShowErrUser && (
+            {shouldShowErrorUser && (
               <span className="error">Please choose a user</span>
             )}
           </label>
@@ -113,7 +127,7 @@ export const App = () => {
         </button>
       </form>
 
-      <TodoList todos={toDos} />
+      <TodoList todos={todos} />
     </div>
   );
 };
